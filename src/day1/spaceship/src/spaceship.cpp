@@ -33,10 +33,10 @@ class Spaceship : public rclcpp::Node
       this->distance_publisher_ = this->create_publisher<std_msgs::msg::String>("distance", 10); // Announce the topic that will be published to
       this->distance_publishing_timer_ = this->create_wall_timer(std::chrono::seconds(1), std::bind(&Spaceship::distance_publishing_callback, this)); // Set a callback timer for a frequency of 1 Hz
       this->start_time_ = this->now(); // Save starting time
-
+      
       // Part 2: Velocity subscription
-      //this->velocity_subscriber_ = this->create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 10, 
-      //std::bind(&Spaceship::velocity_subscription_callback, this, std::placeholders::_1)); // Announce the topic that will listen to velocities + callback
+      this->velocity_subscriber_ = this->create_subscription<geometry_msgs::msg::Twist>("cmd_vel", 10, 
+      std::bind(&Spaceship::velocity_subscription_callback, this, std::placeholders::_1)); // Announce the topic that will listen to velocities + callback
 
       // Part 3: Status feedback service
       //this->status_server_ = this->create_service<spaceship_interfaces::srv::Status>("/get_status", 
@@ -47,27 +47,28 @@ class Spaceship : public rclcpp::Node
     // Part 1: Distance publishing
     void distance_publishing_callback()
     { 
-      // Start the message format
-      //auto message = std_msgs::msg::String();
+      // Start the message
+      auto message = std_msgs::msg::String(); // Message declaration
       
       // Math to estimate current distance 
-      //long speed_to_sun = 17; // kps
-      //long initial_distance_to_sun = 24'579'015'078; // km
-      //long current_distance = initial_distance_to_sun + speed_to_sun*(this->seconds_passed_); // Assume roughly one cycle a second
-      //this->seconds_passed_++; // Assume roughly one cycle a second
+      // Calculate the duration from the start of the program
+      rclcpp::Duration time_duration = this->now() - this->start_time_; // Subtraction of two Time classes
+      double time_duration_seconds = (double) (time_duration.nanoseconds()/1e9); // Conversion to seconds in double type
+
+      // Calculate total distance from the Sun
+      double current_distance = this->initial_distance_to_sun_ + this->speed_to_sun_*time_duration_seconds; // Math exp
 
       // Publish the message
-      //message.data = "Distance from Sun is " + std::to_string(current_distance) + " km! I am far :-)";
-      //this->distance_publisher_->publish(message);
+      message.data = "Distance to Sun is " + std::to_string(current_distance) + " km at time " + std::to_string(time_duration_seconds) + " s"; // Message generation
+      this->distance_publisher_->publish(message); // Message publication
     }
 
     // Part 2: Velocity subscription
     void velocity_subscription_callback(const geometry_msgs::msg::Twist &msg)
     {
       // Log read speed to console
-      //RCLCPP_INFO(this->get_logger(), "Spaceship got the following velocity command: v=(%.2f, %.2f, %.2f), w=(%.2f, %.2f, %.2f)", 
-      //msg.linear.x, msg.linear.y, msg.linear.z, msg.angular.x, msg.angular.y, msg.angular.z);
-      // The implementation of this function will come from dev team :-)
+      RCLCPP_INFO(this->get_logger(), "Spaceship got the following velocity command: v=(%.2f, %.2f, %.2f), w=(%.2f, %.2f, %.2f)", 
+      msg.linear.x, msg.linear.y, msg.linear.z, msg.angular.x, msg.angular.y, msg.angular.z); // Logging
     }
 
     // Part 3: Status feedback service
@@ -99,7 +100,7 @@ class Spaceship : public rclcpp::Node
     rclcpp::Time start_time_; // Save the time when the node starts
 
     // Part 2: Create a subscriber that listens to velocity commands
-    //rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr velocity_subscriber_;
+    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr velocity_subscriber_; // Subscriber mechanism
 
     // Part 3: Create a service server that yields back the status of components
     //rclcpp::Service<spaceship_interfaces::srv::Status>::SharedPtr status_server_;
