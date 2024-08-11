@@ -464,20 +464,203 @@ Logs on the terminal are shown below. Note their frequency compared to the messa
 
 RQt is a fantastic tool! Take some time to look at its other options when you can.
 
-## Appendix
+## 6) Task 3: ROS Parameters
 
-Parameters
-Difference between services and topics
-ROS 2 interfaces are not typically in the same path
-Why placeholders?
-Talk about callbacks and executors - thread efficiency. Comps and lifecycle
+In ROS2, parameters are node properties that can be used to configure the node at startup and at runtime. In a sense, they work like class attributes. Unlike ROS1, in ROS2 parameters are saved by the nodes themselves, not by a parameter server. You can read more about parameters [here](https://docs.ros.org/en/humble/Concepts/Basic/About-Parameters.html).
+
+Parameters consist of a key and value, with an optional descriptor explaining what they do. 
+
+For our spaceship case, suppose we can have multiple configurations. For example, the spaceship can be launched with a "computer", "network module" and "sensors". But at some point, we might lose a module. Or use software to add functionality that creates new modules. In order to achieve this functionality, we need to update the code. 
 
 ---
 
-**QUESTION**: 
+**QUESTION**: Given the text above, assume we want to have a parameter in the node that stores the existing modules by their names. Considering the value types accepted by the parameters in ROS 2, what type should this parameter be?
 
-**HINT**: 
+**HINT**: Look at "overview" [here](https://docs.ros.org/en/humble/Concepts/Basic/About-Parameters.html).
 
 **ANSWER**:
+
+```cpp
+string[]
+```
+
+---
+---
+
+**QUESTION**: In the class constructor, declare a parameter named "components", of the same type determined above, with initial components "Computer", "Engines", "Network" and "Sensors".
+
+**HINT**: [Tutorial on C++ parameters](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Using-Parameters-In-A-Class-CPP.html)
+
+**ANSWER**:
+
+```cpp
+this->declare_parameter("components", std::vector<std::string>{"Computer", "Engines", "Network", "Sensors"}); // Declare parameter
+```
+---
+
+After recompiling the package and relaunching the node, you can see that the parameter has actually been created inside the node. 
+
+To get all parameters:
+
+```bash
+ros2 param list
+```
+Output:
+```
+/voyager_spaceship:
+  components
+  qos_overrides./parameter_events.publisher.depth
+  qos_overrides./parameter_events.publisher.durability
+  qos_overrides./parameter_events.publisher.history
+  qos_overrides./parameter_events.publisher.reliability
+  use_sim_time
+```
+
+Notice there are parameters, like ```use_sim_time``` (mentioned previously) that we did not explicitly declare, but that are created automatically by the parent class. The other nodes, named with prefix "qos", have to do with [quality of service](https://docs.ros.org/en/humble/Concepts/Intermediate/About-Quality-of-Service-Settings.html). This is a whole can of worms that far escapes the scope of this workshop, but do check these settings out if you plan on developing ROS professionally. 
+
+To get a parameter value:
+
+```bash
+ros2 param get /voyager_spaceship components 
+```
+
+Output:
+
+```
+String values are: ['Computer', 'Engines', 'Network', 'Sensors']
+```
+
+You can also use the CLI tools to set parameters as well. 
+
+---
+
+**QUESTION**: Suppose we lost the sensors component in a collision with an asteroid. Use the CLI tools to remove that component from the parameters. 
+
+**HINT**: Inspiration [here](https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Parameters/Understanding-ROS2-Parameters.html).
+
+**ANSWER**:
+
+```bash
+ros2 param set /voyager_spaceship components "[Computer, Engines, Network]"
+```
+
+---
+
+
+## 7) Task 4: ROS Services
+
+Finally, let us implement a service that tells the status of the loaded components. We want some service that has a string as a request (the component's name) and also has a string as a response (the component's status). 
+
+---
+
+**QUESTION**: We want to create our own interface for this problem. Take a look at package ```spaceship_interfaces```. What is the name of the service interface defined? What are its request and response fields? 
+
+**HINT**: Look inside the "srv" folder. That is where service interfaces are [defined](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Custom-ROS2-Interfaces.html)
+
+**ANSWER**:
+
+Service interface is called "Status.srv"
+
+It has a request named "component" (string) and a response named "status" (string)
+
+---
+
+In ROS 2, it is common to keep interfaces in a separate package to the one where it will be used. That is because packages that generate interfaces are built differently, so [getting interfaces and nodes in the same package](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Single-Package-Define-And-Use-Interface.html) can cause some headache. 
+
+Go back to the ```spaceship``` package. If you look at the included packages, you'll see that the ```spaceship_interfaces``` package is there already with its service. 
+
+---
+
+**QUESTION**: Like the previous publisher and subscriber, create a service attribute in the private section of the class. This service will take the interface defined in the ```spaceship_interfaces```
+
+**HINT**: [Official tutorial on service servers and clients](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Service-And-Client.html).
+
+**ANSWER**:
+
+```cpp
+rclcpp::Service<spaceship_interfaces::srv::Status>::SharedPtr status_server_; // Service server mechanism
+```
+---
+
+---
+
+**QUESTION**: On the class constructor, start a service named ```get_status``` that binds to the callback function ```system_status```. 
+
+**HINT**: This is extremely similar to the subscriber, but notice that the callback takes two arguments: the request and the reply. This means you'll need two placeholders. You can also find help in the [official tutorial on service servers and clients](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Service-And-Client.html).
+
+**ANSWER**:
+
+```cpp
+this->status_server_ = this->create_service<spaceship_interfaces::srv::Status>("get_status", std::bind(&Spaceship::system_status, this, std::placeholders::_1, std::placeholders::_2)); // Announce the service server
+```
+---
+
+Take a look at the callback function you just bound the service to, ```system_status```. Notice that their arguments. Like the message in the subscriber, we make the request a ```const```, meaning it must not be altered by the code. However unlike the subscriber, we pass the arguments as shared pointers rather than simple references. This is because service interfaces, as you can see in the [official tutorial](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Service-And-Client.html), have their response changed in place. As such, shared pointer is the safest way to go about it. You could also make the subscriber callback argument a shared pointer if you wanted to, but it doesn't matter as much. 
+
+Now we will write the body of the service server callback.
+
+---
+
+**QUESTION**: Inside the service server callback, load the parameter with the components into a vector variable. 
+
+**HINT**: If the command to write the parameter is ```set_parameter```, what is the command to get parameters?... You also have to load the parameter in a way C++ understands. Answer is in [here](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Using-Parameters-In-A-Class-CPP.html) too.
+
+**ANSWER**:
+
+```cpp
+std::vector<std::string> components = this->get_parameter("components").as_string_array(); // Load and convert param
+```
+
+---
+
+---
+
+**QUESTION**: Process the request passed the following way: if the component is present in the parameters, just say it is good. If not, say the component is non-existent. This exercise involves obtaining the requested component from the interface and also altering the interface to give back the request. 
+
+**HINT**: The [official tutorial](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Service-And-Client.html) is a good place to check for interface manipulation. Also, [std::count](https://www.geeksforgeeks.org/std-count-cpp-stl/) is a quick fix to see if the requested element is in the parameter list. 
+
+**ANSWER**:
+
+```cpp
+int cnt = std::count(components.begin(), components.end(), request->component);
+
+if(cnt > 0)
+{
+  response->status = "Component is good!";
+}
+else
+{
+  response->status = "Non-existent component!";
+}
+```
+
+---
+
+One question that pops up a lot is when to use services or topics to transmit information. The general idea is:
+
+| Topics    | Services |
+| :--------- | :-------- |
+| Continuous streaming  | Information on demand    |
+| Subscriber independent | Need some sort of variable input    |
+
+People say that you should always use topics for things like sensors. That is not true. If your sensor data is heavy, like, say, an image, it might be best to keep the data on demand only and make it a service (like a snapshot). One very important similarity between topics and services is that they both should be **fast**. Don´t use a service for a lengthy calculation or process. For those cases, prefer the more advanced concept of [actions](https://docs.ros.org/en/humble/Tutorials/Intermediate/Creating-an-Action.html), which unfortunately is too much to cover in this workshop. 
+
+## 8) Advanced concepts and standards
+
+The node developed here is very simple and serves as a good starting point, but it is not the actual standard that is used (or at least should be used) by professional ROS developers. Three main features of ROS 2 nodes have been left out here: executors, compositions, and managed nodes.
+
+[Executors](https://docs.ros.org/en/humble/Concepts/Intermediate/About-Executors.html) are a more efficient way of running nodes than the ```spin()``` function at the end of the source code. They basically allow for a better threading model, permitting, for example, multiple threads. This solves many blocking call issues (not all of them though). 
+
+[Compositions](https://docs.ros.org/en/humble/Concepts/Intermediate/About-Composition.html) are another big thing in ROS 2, and they allow your node to be loaded more like a library than like an executable. Composition nodes walk hand-in-hand with executors, as many nodes can be loaded into a single process rather than multiple different processes in the machine. [This increases speed and reduces the hardware resources needed for running the ROS 2 program](https://arxiv.org/pdf/2305.09933). 
+
+
+Finally, [managed nodes](https://design.ros2.org/articles/node_lifecycle.html) introduce the concept of lifecycle, which lets you treat the node as a state machine, more closely controlling what features are available at which points of the node's execution. 
+
+
+For more information on these topics, Marco Matteo Bassa's [book](https://leanpub.com/averyinformaljourneythroughros2) is a fantastic source of information.
+
+---
+
+**CHALLENGE**: Transform the node code so as to implement one of the concepts mentioned above. You can choose any.
 
 ---
