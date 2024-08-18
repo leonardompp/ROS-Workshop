@@ -12,7 +12,7 @@ The structure of the workshop is scheduled as follows:
 
 - Day 0: ROS 2 lecture (if needed, depending on cohort's level of skill).
 - Day 1: Programming a node with topics, services and parameters, together with RQt and CLI tools.
-- Day 2: Using external libraries inside a ROS node. ROS bags. Launch files.
+- Day 2: Using external libraries and packages inside a ROS node. ROS bags. Bridging.
 - Day 3: Use of common external packages and how they typically integrate with ROS. Development of a ROS simulation.
 - Day 4: Real life robot package study.
 
