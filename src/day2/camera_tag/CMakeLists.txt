@@ -12,11 +12,10 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
 # ADD THE FIND_PACKAGE TAGS HERE #
-find_package(std_msgs REQUIRED)
-find_package(sensor_msgs REQUIRED)
-find_package(cv_bridge REQUIRED)
 
-find_package(OpenCV REQUIRED)
+
+
+
 ##################################
 
 add_executable(aruco_detection src/aruco_detection.cpp)

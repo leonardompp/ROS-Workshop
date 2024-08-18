@@ -13,11 +13,12 @@
   </export>
 
   <depend>rclcpp</depend>
-  <depend>std_msgs</depend>
-  <depend>sensor_msgs</depend>
-  <depend>vision_opencv</depend>
+  <!-- Add tags here -->
 
-  <depend>libopencv-dev</depend>
+
+
+  <!-- ############# -->
+
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
