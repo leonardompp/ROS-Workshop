@@ -1,6 +1,6 @@
 <h1>ROS 2 Workshop Instructions - Day 1</h1>
 
-This first exercise aims to introduce the very basics of ROS 2. This is done by writing a simple node with basic functions, ir order to explore some key points in ROS.
+This first exercise aims to introduce the very basics of ROS 2. This is done by writing a simple node with basic functions in order to explore some key points in ROS.
 
 ## 1) Introduction
 
@@ -105,7 +105,7 @@ source install/setup.bash
 If you want to run the package for testing, use:
 
 ```bash
-ROS 2 run spaceship spaceship
+ros2 run spaceship spaceship
 ```
 
 You should see... absolutely nothing (including no errors!).
@@ -158,13 +158,13 @@ Time syncing is a pretty common problem in robotics. By default, ROS reads the s
 You can read more about time and clocks in ROS here:
 
 - [ROS Wiki](https://wiki.ros.org/Clock#Using_Simulation_Time_from_the_.2BAC8-clock_Topic)
-- [ROS 2 Design](https://design.ROS 2.org/articles/clock_and_time.html)
+- [ROS 2 Design](https://design.ros2.org/articles/clock_and_time.html)
 
 ---
 
 **QUESTION**: Create a class attribute that will store the moment the node is started.
 
-**HINT**: Take a look at the ```now()``` method in the [rclcpp API](https://docs.ROS 2.org/ardent/api/rclcpp/classrclcpp_1_1_node.html#af706b231620f1c120b7ccd738ec31867). 
+**HINT**: Take a look at the ```now()``` method in the [rclcpp API](https://docs.ros2.org/ardent/api/rclcpp/classrclcpp_1_1_node.html#af706b231620f1c120b7ccd738ec31867). 
 
 **ANSWER**:
 
@@ -222,7 +222,7 @@ We need to do math to calculate the current position of the spaceship relative t
 ---
 **QUESTION**: Get the time, in seconds, passed since the node started.
 
-**HINT**: Consult the operators available for the ```rclcpp::Time``` class [here](https://docs.ROS 2.org/ardent/api/rclcpp/classrclcpp_1_1_time.html). Notice there is another class involved.
+**HINT**: Consult the operators available for the ```rclcpp::Time``` class [here](https://docs.ros2.org/ardent/api/rclcpp/classrclcpp_1_1_time.html). Notice there is another class involved.
 
 **ANSWER**:
 
@@ -273,7 +273,7 @@ Compile the code using ```colcon``` as shown before (ignore the warnings relatin
 
 The reason for that is because your node is publishing messages inside a topic, not printing them to the terminal. But using the CLI (command line interface) provided by ROS, you can see the messages regardless.
 
-Keep the ```spaceship``` node running and open a new terminal. Type ```ROS 2``` and use the "tab" key to autocomplete. A number of suggestions should have popped up.
+Keep the ```spaceship``` node running and open a new terminal. Type ```ros2``` and use the "tab" key to autocomplete. A number of suggestions should have popped up.
 
 ---
 
@@ -283,8 +283,8 @@ Keep the ```spaceship``` node running and open a new terminal. Type ```ROS 2``` 
 
 **ANSWER**:
 
-- ```ROS 2 node``` for node info.
-- ```ROS 2 topic``` for topic info.
+- ```ros2 node``` for node info.
+- ```ros2 topic``` for topic info.
 
 ---
 
@@ -293,7 +293,7 @@ The CLI is a fantastic tool for understanding your ROS environment, and you can 
 For example, say you want a list of nodes running. You can do:
 
 ```bash
-ROS 2 node list
+ros2 node list
 ```
 
 And see the following result in the terminal:
@@ -310,7 +310,7 @@ And see the following result in the terminal:
 **ANSWER**:
 
 ```bash
-ROS 2 topic list
+ros2 topic list
 ```
 With topics:
 
@@ -326,14 +326,14 @@ We want to see what messages are being produced on a topic.
 
 ---
 
-**QUESTION**: Type ```ROS 2 topic -h``` to get a list of available commands for topic. Which one do you think is useful for echoing messages being published?
+**QUESTION**: Type ```ros2 topic -h``` to get a list of available commands for topic. Which one do you think is useful for echoing messages being published?
 
 **HINT**: Look at the names again...
 
 **ANSWER**:
 
 ```bash
-ROS 2 topic echo
+ros2 topic echo
 ```
 
 ---
@@ -341,7 +341,7 @@ ROS 2 topic echo
 If we run ```echo``` followed by a topic name, we get the messages written:
 
 ```bash
-ROS 2 topic echo /distance
+ros2 topic echo /distance
 > data: Distance to Sun is 24579041054.228409 km at time 1528.013436 s
 ```
 
@@ -355,7 +355,7 @@ We already wrote a publisher. Now assume the spaceship is also supposed so subsc
 
 **QUESTION**: Using the CLI tools, search for ROS interfaces involving twists. List the msg interfaces that implement twists.  
 
-**HINT**: ```ROS 2 interface list | grep "Twist"```
+**HINT**: ```ros2 interface list | grep "Twist"```
 
 **ANSWER**:
 
@@ -418,7 +418,7 @@ Now is is time to write the body of the callback.
 
 **QUESTION**: Write the body of the ```velocity_subscription_callback```. This will be simple: just write all 6 components of the twist to the console with 2 decimal places. Don't use ```printf``` function: logging in ROS is done in another way.
 
-**HINT**: Check out the [tutorial](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html) for writing a node and the [RCLCPP_INFO](https://docs.ROS 2.org/bouncy/api/rclcpp/logging_8hpp.html#aeb160b6dd1edb7273480560c1027b264) function.
+**HINT**: Check out the [tutorial](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html) for writing a node and the [RCLCPP_INFO](https://docs.ros2.org/bouncy/api/rclcpp/logging_8hpp.html#aeb160b6dd1edb7273480560c1027b264) function.
 
 **ANSWER**:
 
@@ -434,7 +434,7 @@ Compile the package and run the spaceship node. Even though this time we logged 
 You could run a teleop node. For example, on another terminal, run:
 
 ```bash
-ROS 2 run teleop_twist_keyboard teleop_twist_keyboard
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
 If you press the keys shown in the teleop console and then move back to the spaceship console, you should see some message like:
@@ -506,7 +506,7 @@ After recompiling the package and relaunching the node, you can see that the par
 To get all parameters:
 
 ```bash
-ROS 2 param list
+ros2 param list
 ```
 Output:
 ```
@@ -524,7 +524,7 @@ Notice there are parameters, like ```use_sim_time``` (mentioned previously), tha
 To get a parameter value:
 
 ```bash
-ROS 2 param get /voyager_spaceship components 
+ros2 param get /voyager_spaceship components 
 ```
 
 Output:
@@ -539,12 +539,12 @@ You can also use the CLI tools to set parameters as well.
 
 **QUESTION**: Suppose we lost the sensors component in a collision with an asteroid. Use the CLI tools to remove that component from the parameters. 
 
-**HINT**: Inspiration [here](https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS 2-Parameters/Understanding-ROS 2-Parameters.html).
+**HINT**: Inspiration [here](https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Parameters/Understanding-ROS2-Parameters.html).
 
 **ANSWER**:
 
 ```bash
-ROS 2 param set /voyager_spaceship components "[Computer, Engines, Network]"
+ros2 param set /voyager_spaceship components "[Computer, Engines, Network]"
 ```
 
 ---
@@ -558,7 +558,7 @@ Finally, let us implement a service that tells the status of the loaded componen
 
 **QUESTION**: We want to create our own interface for this problem. Take a look at package ```spaceship_interfaces```. What is the name of the service interface defined? What are its request and response fields? 
 
-**HINT**: Look inside the "srv" folder. That is where service interfaces are [defined](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Custom-ROS 2-Interfaces.html).
+**HINT**: Look inside the "srv" folder. That is where service interfaces are [defined](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Custom-ROS2-Interfaces.html).
 
 **ANSWER**:
 
@@ -675,10 +675,10 @@ The node developed here is very simple and serves as a good starting point, but 
 [Compositions](https://docs.ros.org/en/humble/Concepts/Intermediate/About-Composition.html) are another big thing in ROS 2, and they allow your node to be loaded more like a library than like an executable. Composable nodes walk hand-in-hand with executors, as many nodes can be loaded into a single process rather than multiple different processes in the machine. [This increases speed and reduces the hardware resources needed for running the ROS 2 program](https://arxiv.org/pdf/2305.09933). 
 
 
-Finally, [managed nodes](https://design.ROS 2.org/articles/node_lifecycle.html) introduce the concept of lifecycle, which lets you treat the node as a state machine, more closely controlling what features are available at which points of the node's execution. 
+Finally, [managed nodes](https://design.ros2.org/articles/node_lifecycle.html) introduce the concept of lifecycle, which lets you treat the node as a state machine, more closely controlling what features are available at which points of the node's execution. 
 
 
-For more information on these topics, Marco Matteo Bassa's [book](https://leanpub.com/averyinformaljourneythroughROS 2) is a fantastic source of information.
+For more information on these topics, Marco Matteo Bassa's [book](https://leanpub.com/averyinformaljourneythroughros2) is a fantastic source of information.
 
 ---
 
