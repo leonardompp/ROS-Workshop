@@ -76,19 +76,19 @@
     <!-- Better to make a macro since there are two wheels -->
     <!-- Axes will be more clear further down -->
     <xacro:macro name="wheel_placement" params="wheel_prefix">
-        <!-- Reflection parameter: 1 for right and -1 for left-->
+        <!-- Reflection parameter: -1 for right and 1 for left-->
         <xacro:if value="${wheel_prefix == 'right'}">
-            <xacro:property name="reflection" value="1"/>
+            <xacro:property name="reflection" value="-1"/>
         </xacro:if>
         <xacro:if value="${wheel_prefix == 'left'}">
-            <xacro:property name="reflection" value="-1"/>
+            <xacro:property name="reflection" value="1"/>
         </xacro:if>
         <joint name="${wheel_prefix}_wheel_joint" type="continuous">
             <parent link="wheel_center_link"/>
             <child link="${wheel_prefix}_wheel_link"/>
             <axis xyz="0 0 1"/>
             <!-- Wheel moving forward must be positive z -->
-            <origin xyz="0 ${reflection*(body_y/2+wheel_w/2)} 0" rpy="1.571 0 0"/>
+            <origin xyz="0 ${reflection*(body_y/2+wheel_w/2)} 0" rpy="-1.571 0 0"/>
         </joint>
         <link name="${wheel_prefix}_wheel_link">
             <visual>
@@ -160,5 +160,41 @@
         </collision>
         <xacro:sphere_inertia m="${caster_m}" r="${caster_r}"/>
     </link>
+
+    <!-- Nullify the friction in the caster for simulation purposes -->
+    <gazebo reference="caster_link">
+        <mu1>0</mu1>
+        <mu2>0</mu2>
+    </gazebo>
+
+    <!-- Differential driving of robot in simulation -->
+    <ros2_control name="controller" type="system">
+        <hardware>
+            <plugin>ign_ros2_control/IgnitionSystem</plugin>
+        </hardware>
+        <joint name="right_wheel_joint">
+            <command_interface name="velocity">
+                <param name="min">-100</param>
+                <param name="max">100</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="left_wheel_joint">
+            <command_interface name="velocity">
+                <param name="min">-100</param>
+                <param name="max">100</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+    <gazebo>
+        <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+            <robot_param>robot_description</robot_param>
+            <robot_param_node>robot_state_publisher</robot_param_node>
+            <parameters>$(find simulation_files)/config/control_parameters.yaml</parameters>
+        </plugin>
+    </gazebo>
 
 </robot>

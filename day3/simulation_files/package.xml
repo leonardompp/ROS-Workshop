@@ -13,7 +13,14 @@
   <test_depend>ament_lint_common</test_depend>
 
   <exec_depend>xacro</exec_depend>
-
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>ros_gz</exec_depend> <!-- This will install Ignition Fortress. Don't install with Gazebo Classic 11-->
+  <exec_depend>ros2_control</exec_depend>
+  <exec_depend>ros2_controllers</exec_depend>
+  <exec_depend>ign_ros2_control</exec_depend> <!-- Plugin to run ros2 control in Ignition. Changed names compared to official docs --> 
+  
+  
   <export>
     <build_type>ament_cmake</build_type>
   </export>

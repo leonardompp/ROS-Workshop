@@ -1,0 +1,21 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+
+    diff_drive:
+      type: diff_drive_controller/DiffDriveController
+    
+    joint_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+diff_drive:
+  ros__parameters:
+    left_wheel_names: ['left_wheel_joint']
+    right_wheel_names: ['right_wheel_joint']
+    wheel_separation: 0.2
+    wheel_radius: 0.08
+    use_stamped_vel: false
+    # THIS ODOMETRY IS WRONG. BASE LINK IS NOT IN MIDDLE OF WHEELS
+
+# joint_broad:
+#   ros__parameters:

@@ -11,9 +11,9 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-# Install sim files
+# Install files to package share
 install(
-  DIRECTORY launch config urdf
+  DIRECTORY launch urdf config
   DESTINATION share/${PROJECT_NAME}
 )
 
