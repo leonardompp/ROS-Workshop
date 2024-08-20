@@ -2,6 +2,16 @@
 
 This first exercise aims to introduce the very basics of ROS 2. This is done by writing a simple node with basic functions in order to explore some key points in ROS.
 
+- [1) Introduction](#1-introduction)
+- [2) Task 0: Setting up](#2-task-0-setting-up)
+- [2) Task 1: Publisher and code basics](#2-task-1-publisher-and-code-basics)
+- [3) CLI Tools](#3-cli-tools)
+- [4) Task 2: Subscriber](#4-task-2-subscriber)
+- [5) RQt Tools](#5-rqt-tools)
+- [6) Task 3: ROS Parameters](#6-task-3-ros-parameters)
+- [7) Task 4: ROS Services](#7-task-4-ros-services)
+- [8) Advanced concepts and standards](#8-advanced-concepts-and-standards)
+
 ## 1) Introduction
 
 You will be working with two packages for this task: ```spaceship_interfaces``` and ```spaceship```. As the names imply, we will be making a node that simulates a spaceship! 
@@ -153,7 +163,7 @@ rclcpp::Publisher<std_msgs::msg::String>::SharedPtr distance_publisher_; // Actu
 
 We need to also have a way to store the time when the program started. This is a great opportunity to talk about time syncing in ROS. 
 
-Time syncing is a pretty common problem in robotics. By default, ROS reads the system time (also know as "wall-time"). This means that if you're running nodes on different machines, you must find a way to get all clocks synced. On the other hand, nodes running on the same machine usually keep their clocks neatly synced. You can also have the nodes read from a simulation time: if the node parameter ```use_sim_time``` is set to true (we´ll see parameters in a sec), the node will read time from topic ```/clock``` published by the simulation, rather than from the system. All nodes have this parameter and it is set to ```false``` by default. 
+Time syncing is a pretty common problem in robotics. By default, ROS reads the system time (also known as "wall-time"). This means that if you're running nodes on different machines, you must find a way to get all clocks synced. On the other hand, nodes running on the same machine usually keep their clocks neatly synced. You can also have the nodes read from a simulation time: if the node parameter ```use_sim_time``` is set to true (we´ll see parameters in a sec), the node will read time from topic ```/clock``` published by the simulation, rather than from the system. All nodes have this parameter and it is set to ```false``` by default. 
 
 You can read more about time and clocks in ROS here:
 
@@ -269,7 +279,9 @@ this->distance_publisher_->publish(message); // Message publication
 
 ## 3) CLI Tools
 
-Compile the code using ```colcon``` as shown before (ignore the warnings relating to other parts of the code) and resource the overlay workspace. Then run the ```spaceship``` node in the ```spaceship``` package. You should see... nothing again!
+Compile the code using ```colcon``` as shown before (ignore the warnings relating to other parts of the code) and resource the overlay workspace. Then run the ```spaceship``` node in the ```spaceship``` package. ```ros2 run spaceship spaceship``` is the command to run from a terminal that has the overlay sourced.
+
+You should see... nothing again!
 
 The reason for that is because your node is publishing messages inside a topic, not printing them to the terminal. But using the CLI (command line interface) provided by ROS, you can see the messages regardless.
 
@@ -437,7 +449,7 @@ You could run a teleop node. For example, on another terminal, run:
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
-If you press the keys shown in the teleop console and then move back to the spaceship console, you should see some message like:
+If you press the keys shown in the teleop console and then move back to the spaceship console (have that running also), you should see some message like:
 
 ```
 [INFO] [1723317348.860140518] [voyager_spaceship]: Spaceship got the following velocity command: v=(0.50, 0.00, 0.00), w=(0.00, 0.00, 0.00)
@@ -447,13 +459,15 @@ That is because the keyboard teleop node publishes its commands to ```cmd_vel```
 
 Another option is to use RQt. [RQt](https://docs.ros.org/en/humble/Concepts/Intermediate/About-RQt.html) is a GUI for interacting with ROS. It consists of multiple plugins for topic interaction, service calling, image viewing, etc. Debugging using graphical tools is much easier than through the terminal. 
 
+Start RQt by just typing ```rqt``` on a terminal.
+
 ![RQt interface](../../images/rqt.png "RQt interface")
 
-If you select the "plugins" tab on the top of the screen, then "topics->message publisher", a new interface should pop up. From there, you can select the topic, message type and frequency to publish. Click on the "+" symbol to add the selection to the list. Once you are done editing values, check the box next to the topic to start publishing, such as in the picture below. 
+If you select the "plugins" tab on the top of the screen, then "topics->message publisher", a new interface should pop up. From there, you can select the topic, message type and frequency to publish. Click on the "+" symbol to add the selection to the list. You can type right in this window to add a value under any of the "expressions". Once you are done editing values, check the box next to the topic to start publishing, such as in the picture below. 
 
 ![RQt topic](../../images/rqt_topic.png "RQt topic")
 
-The info on the spaceship terminal are shown below. Note their frequency compared to the message publisher in the image.
+The info on your other spaceship terminal are shown below. Note their frequency compared to the message publisher in the image.  This frequency has been set by your settings in RQt.  Uncheck the box and you'll see that the output stops.
 
 ```
 [INFO] [1723318007.389180580] [voyager_spaceship]: Spaceship got the following velocity command: v=(1.00, 0.00, 0.00), w=(0.00, -1.00, 0.00)
@@ -466,6 +480,9 @@ The info on the spaceship terminal are shown below. Note their frequency compare
 ```
 
 RQt is a fantastic tool! Take some time to look at its other options when you can.
+Try the following plugins:
+* Introspection > Node graph
+* Topics > Topic Monitor
 
 ## 6) Task 3: ROS Parameters
 

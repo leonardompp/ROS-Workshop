@@ -1,5 +1,11 @@
 <h1>ROS 2 Workshop Instructions</h1>
 
+- [1) Introduction](#1-introduction)
+- [2) Structure](#2-structure)
+- [3) Prerequisites](#3-prerequisites)
+- [4) Installation](#4-installation)
+- [5) Ownership note](#5-ownership-note)
+
 ## 1) Introduction
 
 This workshop aims to showcase some functionalities of ROS 2, while also illustrating some of the best practices associated with it. The aim is to do that at a level that is more advanced than what is generally covered in the typical ROS tutorials found online. On the other hand, the workshop starts from the basics, so as to introduce ROS to people who have never used it before. 
@@ -27,7 +33,7 @@ The structure of the workshop is scheduled as follows:
 
 ## 4) Installation 
 
-Follow the installation instructions on this [link](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html) to install ROS 2 Humble on your machine. The desired package suite is the **Desktop Install**. Don´t forget to also install the ```ros-dev-tools```.
+Follow the installation instructions on this [link](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html) to install ROS 2 Humble on your machine. The desired package suite is the **Desktop Install**. You don't need the "ROS-Base Install Bare Bones", but do install the ```ros-dev-tools```.
 
 You should add the ROS sourcing to your ```.bashrc``` folder to ensure every new terminal sets up the correct ROS environment (this is called an "underlay"):
 
@@ -47,7 +53,7 @@ Finally, install the full suite of RQT tools:
 sudo apt install '~nros-humble-rqt*'
 ```
 
-If you with to test if your installation is running successful, try executing these examples in separate terminals:
+If you with to test if your installation is running successfully, try executing these examples in separate terminals:
 
 ```bash
 ros2 run demo_nodes_cpp talker
@@ -62,3 +68,5 @@ ros2 run demo_nodes_py listener
 Workshop author: Leonardo Mouta
 
 Author email: [mouta@cmu.edu](mouta@cmu.edu)
+
+Special thanks to Leanne Lisien for feedback on workshop.
