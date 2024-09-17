@@ -45,12 +45,21 @@ rosdep install --from-paths src -y --ignore-src
 
 ---
 
-## 3) Task 1: Getting started with the simulation
+## 3) Task 1: Getting started with the simulation - launch files
 
 As usual, colcon build your workspace and source the files. 
 
+As mentioned through this tutorial, we will be running a simulation. You can activate Gazebo through the CLI by running:
 
+```bash
+ign gazebo
+```
 
+The more interesting way for our purposes is to run Gazebo from inside a ROS package. ```ros_gz_sim``` has an option for that:
+
+```bash
+ros2 launch ros_gz_sim gz_sim.launch.py
+```
 
 ---
 
